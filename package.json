@@ -1,6 +1,6 @@
 {
   "name": "streamiterator",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "converts ReadableStream into AsyncIterator",
   "keywords": [
     "iterable",

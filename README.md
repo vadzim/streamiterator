@@ -6,13 +6,15 @@ Converts ReadableStream into AsyncIterator.
 With this module you can [iterate](https://github.com/tc39/proposal-async-iteration) over a nodejs stream (file, http response, etc) with a plain loop:
 
 ```js
-import streamIterator from "streamiterator"
-// or
-// const streamIterator = require("streamiterator")
+import streamiterator from "streamiterator"
+import split from "split"
 
-async function DoIt(stream) {
-	for await (const value of streamIterator(stream)) {
-		console.log(`Read: ${value}`)
+async function DoIt() {
+	// iterate over lines in a file
+	for await (const line of streamiterator(
+		fs.createReadStream("data.txt").pipe(split())
+	)) {
+		console.log(`Read: ${line}`)
 	}
 }
 ```

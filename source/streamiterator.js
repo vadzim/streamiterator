@@ -8,13 +8,13 @@ function createStreamIterator(stream) {
 	const resolvers = []
 	const results = []
 	let inputClosed = false
-	let outputClosed = false
 
 	function copyResults() {
-		while (!outputClosed && resolvers.length > 0 && results.length > 0) {
+		while (resolvers.length > 0 && results.length > 0) {
+			// results can be cleaned up in a callback created in shutdown()
 			resolvers.shift()(results.shift())
 		}
-		if (inputClosed || outputClosed) {
+		if (inputClosed) {
 			while (resolvers.length > 0) {
 				resolvers.shift()({ value: undefined, done: true })
 			}
@@ -64,10 +64,10 @@ function createStreamIterator(stream) {
 				onSaveResult(resolve)
 			}
 			function done() {
-				outputClosed = true
+				results.length = 0
 				if (inputClosed || typeof stream.destroy !== "function") {
-					save()
 					close()
+					save()
 				} else {
 					close()
 					stream.destroy(null, save)

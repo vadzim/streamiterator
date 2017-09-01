@@ -100,7 +100,7 @@ test("throwing in a loop emitted errors | stream.push", async () => {
 	expect(count).toBe(6)
 })
 
-test("reading ahead", async () => {
+test("reading ahead | stream.write", async () => {
 	const stream = new PassThrough({ objectMode: true })
 	setTimeout(() => {
 		stream.write(1)
@@ -121,7 +121,32 @@ test("reading ahead", async () => {
 	expect(await i5).toEqual({ value: undefined, done: true })
 })
 
-test("returning ahead", async () => {
+test("reading ahead | stream.push", async () => {
+	const stream = new Readable({
+		objectMode: true,
+		highWaterMark: 1,
+		read() {
+			this._count |= 0
+			this.push(++this._count)
+			if (this._count >= 3) {
+				this.push(null)
+			}
+		},
+	})
+	const iterator = streamiterator(stream)
+	const i1 = iterator.next()
+	const i2 = iterator.next()
+	const i3 = iterator.next()
+	const i4 = iterator.next()
+	const i5 = iterator.next()
+	expect(await i1).toEqual({ value: 1, done: false })
+	expect(await i2).toEqual({ value: 2, done: false })
+	expect(await i3).toEqual({ value: 3, done: false })
+	expect(await i4).toEqual({ value: undefined, done: true })
+	expect(await i5).toEqual({ value: undefined, done: true })
+})
+
+test("returning ahead | stream.write", async () => {
 	const stream = new PassThrough({ objectMode: true })
 	setTimeout(() => {
 		stream.write(1)
@@ -148,7 +173,35 @@ test("returning ahead", async () => {
 	expect(await i5).toEqual({ value: undefined, done: true })
 })
 
-test("throwing ahead", async () => {
+test("returning ahead | stream.push", async () => {
+	let closed = false
+	const stream = new Readable({
+		objectMode: true,
+		highWaterMark: 1,
+		read() {
+			this._count |= 0
+			this.push(++this._count)
+		},
+		destroy(error, callback) {
+			closed = true
+			callback()
+		},
+	})
+	const iterator = streamiterator(stream)
+	const i1 = iterator.next()
+	const i2 = iterator.next()
+	const i3 = iterator.return(42)
+	const i4 = iterator.next()
+	const i5 = iterator.next()
+	expect(await i1).toEqual({ value: 1, done: false })
+	expect(await i2).toEqual({ value: 2, done: false })
+	expect(await i3).toEqual({ value: 42, done: true })
+	expect(closed).toBe(true)
+	expect(await i4).toEqual({ value: undefined, done: true })
+	expect(await i5).toEqual({ value: undefined, done: true })
+})
+
+test("throwing ahead | stream.write", async () => {
 	const stream = new PassThrough({ objectMode: true })
 	setTimeout(() => {
 		stream.write(1)
@@ -177,7 +230,7 @@ test("throwing ahead", async () => {
 	expect(await onerror).toBe(13)
 })
 
-test("closing stream on loop break", async () => {
+test("closing stream on loop break | stream.write", async () => {
 	const stream = new PassThrough({ objectMode: true })
 	setTimeout(() => {
 		stream.write(1)
@@ -199,7 +252,7 @@ test("closing stream on loop break", async () => {
 	expect(closed).toBe(true)
 })
 
-test("closing stream on throwing in a loop", async () => {
+test("closing stream on throwing in a loop | stream.write", async () => {
 	const stream = new PassThrough({ objectMode: true })
 	setTimeout(() => {
 		stream.write(1)
@@ -227,7 +280,7 @@ test("closing stream on throwing in a loop", async () => {
 	expect(closed).toBe(true)
 })
 
-test("reading data with errors after it is buffered", async () => {
+test("reading buffered data after emitting error | stream.write", async () => {
 	const stream = new PassThrough({ objectMode: true })
 	process.nextTick(async () => {
 		await new Promise(resolve => setTimeout(resolve, 20))

@@ -49,7 +49,7 @@ import "streamiterator/polyfill"
 import fs from "fs"
 
 async function DoIt() {
-	for await (const data of fs.createReadableStream("./data.txt")) {
+	for await (const data of fs.createReadStream("./data.txt")) {
 		console.log(data)
 	}
 }

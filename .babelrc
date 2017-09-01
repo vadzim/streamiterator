@@ -6,6 +6,7 @@
 	],
 	plugins: [
 		"add-module-exports",
+		"idx",
 	],
 	"env": {
 		"development": {

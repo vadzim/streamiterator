@@ -1,8 +1,13 @@
+import idx from "idx"
+
 if (!Symbol.asyncIterator) {
 	Symbol.asyncIterator = Symbol("asyncIterator")
 }
 
 const makeValueRecord = value => ({ value, done: false })
+
+// use thenable for storing errors instead of Promise.reject to not leave rejected promise unhandled on top of event loop
+const makeError = error => ({ then: (_, reject) => reject(error) })
 
 function createStreamIterator(stream) {
 	const resolvers = []
@@ -19,27 +24,34 @@ function createStreamIterator(stream) {
 				resolvers.shift()({ value: undefined, done: true })
 			}
 		}
-		if (resolvers.length > 0) {
-			stream.resume()
-		} else {
-			if (!inputClosed) {
-				stream.pause()
-			}
-		}
 	}
 
 	function onData(data) {
 		if (!inputClosed) {
 			results.push(Promise.resolve(data).then(makeValueRecord))
+			copyResults()
+			if (resolvers.length === 0) {
+				stream.pause()
+			}
 		}
-		copyResults()
 	}
 
 	function onError(error) {
 		if (!inputClosed) {
-			results.push(Promise.reject(error))
+			stream.pause()
+			// Flush stream buffer. This is hacky, but I don't know a better way right now.
+			const buffer = idx(stream, _ => _._readableState.buffer)
+			if (buffer) {
+				for (let data; (data = buffer.shift()), data != null; ) {
+					results.push(Promise.resolve(data).then(makeValueRecord))
+				}
+			}
+			results.push(makeError(error))
+			close()
+			if (typeof stream.destroy === "function") {
+				stream.destroy()
+			}
 		}
-		close()
 	}
 
 	function onEnd() {
@@ -57,11 +69,10 @@ function createStreamIterator(stream) {
 		copyResults()
 	}
 
-	function shutdown(onSaveResult, onStreamDestroy) {
-		// using onSaveResult callback instead of a Promise to not leave rejected promise unhandled on top of event loop
+	function shutdown(result, onStreamDestroy) {
 		return new Promise(resolve => {
 			function save() {
-				onSaveResult(resolve)
+				resolve(result)
 			}
 			function done() {
 				results.length = 0
@@ -87,10 +98,10 @@ function createStreamIterator(stream) {
 	}
 
 	stream //
+		.pause()
 		.on("data", onData)
 		.on("error", onError)
 		.on("end", onEnd)
-		.pause()
 
 	const result = {
 		[Symbol.asyncIterator]: () => result,
@@ -98,9 +109,12 @@ function createStreamIterator(stream) {
 			new Promise(resolve => {
 				resolvers.push(resolve)
 				copyResults()
+				if (resolvers.length > 0) {
+					stream.resume()
+				}
 			}),
-		throw: error => shutdown(resolve => resolve(Promise.reject(error)), () => stream.emit("error", error)),
-		return: value => shutdown(resolve => resolve({ value, done: true })),
+		throw: error => shutdown(makeError(error), () => stream.emit("error", error)),
+		return: value => shutdown({ value, done: true }),
 	}
 	return result
 }

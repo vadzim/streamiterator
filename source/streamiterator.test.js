@@ -1,7 +1,7 @@
 import streamiterator from "./streamiterator"
-import { PassThrough } from "stream"
+import { PassThrough, Readable } from "stream"
 
-test("for await loop", async () => {
+test("for await loop | stream.write", async () => {
 	const stream = new PassThrough({ objectMode: true })
 	stream.write(1)
 	stream.write(new Promise(resolve => setTimeout(() => resolve(2), 50)))
@@ -21,24 +21,83 @@ test("for await loop", async () => {
 	expect(count).toBe(6)
 })
 
-test("throwing in a loop emitted errors", async () => {
+test("for await loop | stream.push", async () => {
+	const stream = new Readable({
+		objectMode: true,
+		read() {
+			this._count |= 0
+			this.push(++this._count)
+			const data = ++this._count
+			this.push(new Promise(resolve => setTimeout(() => resolve(data), 50)))
+			this.push(++this._count)
+			if (this._count > 5) {
+				this.push(null)
+			}
+		},
+	})
+	let count = 0
+	for await (const data of streamiterator(stream)) {
+		++count
+		expect(data).toBe(count)
+		expect(data).toBeLessThan(7)
+	}
+	expect(count).toBe(6)
+})
+
+test("throwing in a loop emitted errors | stream.write", async () => {
 	const stream = new PassThrough({ objectMode: true })
+	stream.write(1)
+	stream.write(new Promise(resolve => setTimeout(() => resolve(2), 50)))
+	stream.write(3)
 	setTimeout(() => {
 		stream.write(4)
+		stream.write(5)
+		stream.write(6)
 		stream.emit("error", 13)
+		stream.write(7)
 	}, 100)
 	let error
 	let count = 0
 	try {
 		for await (const data of streamiterator(stream)) {
 			++count
-			expect(data).toBe(4)
+			expect(data).toBe(count)
+			expect(data).toBeLessThan(7)
 		}
 	} catch (e) {
 		error = e
 	}
 	expect(error).toBe(13)
-	expect(count).toBe(1)
+	expect(count).toBe(6)
+})
+
+test("throwing in a loop emitted errors | stream.push", async () => {
+	const stream = new Readable({
+		objectMode: true,
+		read() {
+			this._count |= 0
+			this.push(++this._count)
+			const data = ++this._count
+			this.push(new Promise(resolve => setTimeout(() => resolve(data), 50)))
+			this.push(++this._count)
+			if (this._count > 5) {
+				stream.emit("error", 13)
+			}
+		},
+	})
+	let error
+	let count = 0
+	try {
+		for await (const data of streamiterator(stream)) {
+			++count
+			expect(data).toBe(count)
+			expect(data).toBeLessThan(7)
+		}
+	} catch (e) {
+		error = e
+	}
+	expect(error).toBe(13)
+	expect(count).toBe(6)
 })
 
 test("reading ahead", async () => {
@@ -166,4 +225,34 @@ test("closing stream on throwing in a loop", async () => {
 	expect(count).toBe(1)
 	expect(error).toBe(13)
 	expect(closed).toBe(true)
+})
+
+test("reading data with errors after it is buffered", async () => {
+	const stream = new PassThrough({ objectMode: true })
+	process.nextTick(async () => {
+		await new Promise(resolve => setTimeout(resolve, 20))
+		stream.write(1)
+		await new Promise(resolve => setTimeout(resolve, 20))
+		stream.write(2)
+		await new Promise(resolve => setTimeout(resolve, 20))
+		stream.write(3)
+		await new Promise(resolve => setTimeout(resolve, 20))
+		stream.emit("error", 13)
+	})
+	let count = 0
+	let error
+	try {
+		for await (const data of streamiterator(stream)) {
+			if (count === 0) {
+				await new Promise(resolve => setTimeout(resolve, 100))
+			}
+			++count
+			expect(data).toBe(count)
+			expect(data).toBeLessThan(4)
+		}
+	} catch (e) {
+		error = e
+	}
+	expect(count).toBe(3)
+	expect(error).toBe(13)
 })

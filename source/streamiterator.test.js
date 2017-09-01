@@ -1,4 +1,4 @@
-import streamIterator from "./streamiterator"
+import streamiterator from "./streamiterator"
 import { PassThrough } from "stream"
 
 test("for await loop", async () => {
@@ -13,7 +13,7 @@ test("for await loop", async () => {
 		stream.end()
 	}, 100)
 	let count = 0
-	for await (const data of streamIterator(stream)) {
+	for await (const data of streamiterator(stream)) {
 		++count
 		expect(data).toBe(count)
 		expect(data).toBeLessThan(7)
@@ -30,7 +30,7 @@ test("throwing in a loop emitted errors", async () => {
 	let error
 	let count = 0
 	try {
-		for await (const data of streamIterator(stream)) {
+		for await (const data of streamiterator(stream)) {
 			++count
 			expect(data).toBe(4)
 		}
@@ -49,7 +49,7 @@ test("reading ahead", async () => {
 		stream.write(3)
 		stream.end()
 	}, 100)
-	const iterator = streamIterator(stream)
+	const iterator = streamiterator(stream)
 	const i1 = iterator.next()
 	const i2 = iterator.next()
 	const i3 = iterator.next()
@@ -75,7 +75,7 @@ test("returning ahead", async () => {
 	stream.on("close", () => {
 		closed = true
 	})
-	const iterator = streamIterator(stream)
+	const iterator = streamiterator(stream)
 	const i1 = iterator.next()
 	const i2 = iterator.next()
 	const i3 = iterator.return(42)
@@ -103,7 +103,7 @@ test("throwing ahead", async () => {
 		closed = true
 	})
 	const onerror = new Promise(resolve => stream.on("error", resolve))
-	const iterator = streamIterator(stream)
+	const iterator = streamiterator(stream)
 	const i1 = iterator.next()
 	const i2 = iterator.next()
 	const i3 = iterator.throw(13)
@@ -131,7 +131,7 @@ test("closing stream on loop break", async () => {
 	stream.on("close", () => {
 		closed = true
 	})
-	for await (const data of streamIterator(stream)) {
+	for await (const data of streamiterator(stream)) {
 		++count
 		expect(data).toBe(1)
 		break
@@ -155,7 +155,7 @@ test("closing stream on throwing in a loop", async () => {
 	})
 	let error
 	try {
-		for await (const data of streamIterator(stream)) {
+		for await (const data of streamiterator(stream)) {
 			++count
 			expect(data).toBe(1)
 			throw 13

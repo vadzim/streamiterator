@@ -105,7 +105,7 @@ function createStreamIterator(stream) {
 	return result
 }
 
-export default function streamIterator(stream) {
+export default function streamiterator(stream) {
 	if (typeof stream[Symbol.asyncIterator] === "function") {
 		return stream
 	} else {
@@ -113,4 +113,4 @@ export default function streamIterator(stream) {
 	}
 }
 
-Object.assign(streamIterator, { createStreamIterator })
+Object.assign(streamiterator, { createStreamIterator })

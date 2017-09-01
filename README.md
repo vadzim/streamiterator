@@ -26,11 +26,11 @@ A bit of code with iterables can be seen in [tests](https://github.com/vadzim/st
 It's possible to iterate without `for await`, though it is not so nice as using syntactic suger:
 
 ```js
-import streamIterator from "streamiterator"
+import streamiterator from "streamiterator"
 
 async function DoIt(stream) {
 	for (
-		let done, value, iterator = streamIterator(stream);
+		let done, value, iterator = streamiterator(stream);
 		{done, value} = await iterator.next(), !done;
 	) {
 		console.log(`Read: ${value}`)
@@ -44,7 +44,7 @@ If eventually streams will support async iteration natively then this module wil
 
 ### Polyfill ###
 
-But if you believe that writing `streamIterator(...)` everywhere is a bullshit, and in your world streams have to be iterable from the scratch right now, then you can import `streamiterator/polyfill` in the root of your project and iterate just on streams:
+But if you believe that writing `streamiterator(...)` everywhere is a bullshit, and in your world streams have to be iterable from the scratch right now, then you can import `streamiterator/polyfill` in the root of your project and iterate just on streams:
 
 ```js
 import "streamiterator/polyfill"

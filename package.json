@@ -11,7 +11,7 @@
     "AsyncIterator"
   ],
   "repository": "https://github.com/vadzim/streamiterator",
-  "author": "developer@vadzim.info",
+  "author": "Vadzim Zieńka <developer@vadzim.info>",
   "contributors": [],
   "main": "distr/streamiterator.js",
   "scripts": {

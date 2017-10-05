@@ -6,16 +6,19 @@ const endOfData = new EndOfData()
 function noop() {}
 
 export default function callbackToIterator<D>({
-	subscribe,
-	destroy,
-	pause,
 	resume,
+	pause,
+	destroy,
 }: {|
-	subscribe: (onData: (data: D) => void, onEnd: () => void, onError: (error: mixed) => void) => void,
-	destroy?: () => ?Promise<mixed>,
-	pause?: () => void,
 	resume?: () => void,
-|}): AsyncIterable<D> {
+	pause?: () => void,
+	destroy?: () => ?Promise<mixed>,
+|}): {|
+	iterable: AsyncIterable<D>,
+	emitData: (data: D) => void,
+	emitEnd: () => void,
+	emitError: (error: mixed) => void,
+|} {
 	const results = []
 	const resolves = []
 
@@ -37,19 +40,22 @@ export default function callbackToIterator<D>({
 		}
 	}
 
-	subscribe(onData, () => onData(endOfData), error => onData(Promise.reject(error)))
-
-	return (async function*() {
-		try {
-			while (true) {
-				const data = await (results.length > 0 ? results.shift() : new Promise(onWaiting))
-				if (data instanceof EndOfData) {
-					break
+	return {
+		iterable: (async function*() {
+			try {
+				while (true) {
+					const data = await (results.length > 0 ? results.shift() : new Promise(onWaiting))
+					if (data instanceof EndOfData) {
+						break
+					}
+					yield data
 				}
-				yield data
+			} finally {
+				destroy && (await destroy())
 			}
-		} finally {
-			destroy && (await destroy())
-		}
-	})()
+		})(),
+		emitData: onData,
+		emitEnd: () => onData(endOfData),
+		emitError: error => onData(Promise.reject(error)),
+	}
 }

@@ -2,7 +2,7 @@
 
 import idx from "idx"
 import type { Readable } from "stream"
-import callbackToIterator from "./callbackToIterator"
+import callbackToIterator from "@vadzim/callback-to-iterator"
 
 function createStreamIterator<D>(stream: Readable): AsyncIterable<D> {
 	stream.pause()

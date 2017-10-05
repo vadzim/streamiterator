@@ -39,6 +39,7 @@
     "prettier": "^1.5.3"
   },
   "dependencies": {
+    "@vadzim/callback-to-iterator": "^0.2.0",
     "babel-runtime": "^6.26.0"
   }
 }

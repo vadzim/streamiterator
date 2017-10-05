@@ -214,7 +214,6 @@ test("throwing ahead | stream.write", async () => {
 	stream.on("close", () => {
 		closed = true
 	})
-	const onerror = new Promise(resolve => stream.on("error", resolve))
 	const iterator = streamiterator(stream)
 	const i1 = iterator.next()
 	const i2 = iterator.next()
@@ -227,7 +226,6 @@ test("throwing ahead | stream.write", async () => {
 	expect(closed).toBe(true)
 	expect(await i4).toEqual({ value: undefined, done: true })
 	expect(await i5).toEqual({ value: undefined, done: true })
-	expect(await onerror).toBe(13)
 })
 
 test("closing stream on loop break | stream.write", async () => {

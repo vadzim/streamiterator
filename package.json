@@ -11,9 +11,12 @@
     "AsyncIterator"
   ],
   "repository": "https://github.com/vadzim/streamiterator",
-  "author": "Vadzim Zieńka <developer@vadzim.info>",
+  "bugs": {
+    "url": "https://github.com/vadzim/streamiterator/issues"
+  },
   "contributors": [],
   "main": "distr/streamiterator.js",
+  "author": "Vadzim Zieńka <developer@vadzim.info>",
   "scripts": {
     "build": "babel source --out-dir distr",
     "prettier": "prettier --write $(cat .prettier) 'source/**/*.js' '*.js'",
@@ -22,9 +25,6 @@
     "go": "npm run prettier && npm run build && npm run test"
   },
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/vadzim/streamiterator/issues"
-  },
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-plugin-add-module-exports": "^0.2.1",

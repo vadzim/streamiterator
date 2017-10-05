@@ -1,15 +1,9 @@
 // @flow
 
-// do not leave rejected promise unhandled on top of event loop
-const noop = () => {}
-const makeError = error => {
-	const result = Promise.reject(error)
-	result.catch(noop)
-	return result
-}
-
 class EndOfData {}
 const endOfData = new EndOfData()
+
+function noop() {}
 
 export default function callbackToIterator<D>({
 	subscribe,
@@ -34,12 +28,16 @@ export default function callbackToIterator<D>({
 		if (resolves.length > 0) {
 			resolves.shift()(data)
 		} else {
+			// do not leave rejected promise unhandled on top of the event loop
+			if (data instanceof Promise) {
+				data.catch(noop)
+			}
 			results.push(data)
 			pause && pause()
 		}
 	}
 
-	subscribe(onData, () => onData(endOfData), error => onData(makeError(error)))
+	subscribe(onData, () => onData(endOfData), error => onData(Promise.reject(error)))
 
 	return (async function*() {
 		try {

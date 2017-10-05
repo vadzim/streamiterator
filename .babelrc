@@ -1,6 +1,6 @@
 {
 	presets: [
-		["env", {"targets": {"node": "6"}}],
+		["env", {targets: {node: 6}}],
 		"flow",
 		"stage-0",
 	],
@@ -9,8 +9,8 @@
 		"idx",
 		"transform-runtime",
 	],
-	"env": {
-		"development": {
+	env: {
+		development: {
 			ignore: [
 				"**/*test.js",
 			]

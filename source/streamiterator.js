@@ -9,7 +9,7 @@ function createStreamIterator<D>(stream: Readable): AsyncIterable<D> {
 
 	const emitError = error => {
 		// Flush stream buffer. This is hacky, but I don't know a better way right now.
-		const buffer: Array<D> = (idx(stream, (_: any) => _._readableState.buffer): any)
+		const buffer: D[] = (idx(stream, (_: any) => _._readableState.buffer): any)
 		if (buffer) {
 			while (buffer.length > 0) {
 				emitData(buffer.shift())

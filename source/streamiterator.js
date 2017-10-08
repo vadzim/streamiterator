@@ -3,6 +3,7 @@
 import idx from "idx"
 import type { Readable } from "stream"
 import callbackToIterator from "@vadzim/callback-to-iterator"
+import getAsyncIterable from "@vadzim/get-async-iterable"
 
 function createStreamIterator<D>(stream: Readable): AsyncIterable<D> {
 	stream.pause()
@@ -39,11 +40,7 @@ function createStreamIterator<D>(stream: Readable): AsyncIterable<D> {
 }
 
 export default function streamiterator<D>(stream: Readable): AsyncIterable<D> {
-	if (typeof (stream: any)[(Symbol: any).asyncIterator] === "function") {
-		return (stream: any)
-	} else {
-		return createStreamIterator(stream)
-	}
+	return getAsyncIterable(stream) || createStreamIterator(stream)
 }
 
 Object.assign(streamiterator, { createStreamIterator })

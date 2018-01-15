@@ -1,4 +1,4 @@
-// @flow
+// @ // flow - still no ?. support in flow
 
 import type { Readable } from "stream"
 import callbackToIterator from "@vadzim/callback-to-iterator"

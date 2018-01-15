@@ -58,11 +58,3 @@ async function DoIt() {
 ```
 
 Note that you don't need to import `streamiterator/polyfill` in every file of your project. Just in the `main.js` or similar.
-
-### Contributing ###
-
-__Please contribute!__
-All contributions are greatly appreciated no matter how small or large the contribution is.
-Whether it's a small grammar fix in the README, a huge bug fix, or just an issue report, you will be recognized as a 'Contributor' to this project.
-
-Please, feel free to [open an issue](https://github.com/vadzim/streamiterator/issues) or email me to developer@vadzim.info if you have any question.

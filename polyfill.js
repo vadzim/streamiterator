@@ -1,1 +1,1 @@
-require("./distr/polyfill")
+require("./distr/commonjs/polyfill")

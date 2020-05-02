@@ -1,5 +1,7 @@
-import streamiterator from "./streamiterator"
 import { PassThrough, Readable } from "stream"
+import { streamiterator } from "./streamiterator"
+
+const sCount = Symbol("count")
 
 test("for await loop | stream.write", async () => {
 	const stream = new PassThrough({ objectMode: true })
@@ -25,12 +27,12 @@ test("for await loop | stream.push", async () => {
 	const stream = new Readable({
 		objectMode: true,
 		read() {
-			this._count |= 0
-			this.push(++this._count)
-			const data = ++this._count
+			this[sCount] |= 0
+			this.push(++this[sCount])
+			const data = ++this[sCount]
 			this.push(new Promise(resolve => setTimeout(() => resolve(data), 50)))
-			this.push(++this._count)
-			if (this._count > 5) {
+			this.push(++this[sCount])
+			if (this[sCount] > 5) {
 				this.push(null)
 			}
 		},
@@ -75,12 +77,12 @@ test("throwing in a loop emitted errors | stream.push", async () => {
 	const stream = new Readable({
 		objectMode: true,
 		read() {
-			this._count |= 0
-			this.push(++this._count)
-			const data = ++this._count
+			this[sCount] |= 0
+			this.push(++this[sCount])
+			const data = ++this[sCount]
 			this.push(new Promise(resolve => setTimeout(() => resolve(data), 50)))
-			this.push(++this._count)
-			if (this._count > 5) {
+			this.push(++this[sCount])
+			if (this[sCount] > 5) {
 				stream.emit("error", 13)
 			}
 		},
@@ -126,9 +128,9 @@ test("reading ahead | stream.push", async () => {
 		objectMode: true,
 		highWaterMark: 1,
 		read() {
-			this._count |= 0
-			this.push(++this._count)
-			if (this._count >= 3) {
+			this[sCount] |= 0
+			this.push(++this[sCount])
+			if (this[sCount] >= 3) {
 				this.push(null)
 			}
 		},
@@ -179,8 +181,8 @@ test("returning ahead | stream.push", async () => {
 		objectMode: true,
 		highWaterMark: 1,
 		read() {
-			this._count |= 0
-			this.push(++this._count)
+			this[sCount] |= 0
+			this.push(++this[sCount])
 		},
 		destroy(error, callback) {
 			closed = true
@@ -222,7 +224,12 @@ test("throwing ahead | stream.write", async () => {
 	const i5 = iterator.next()
 	expect(await i1).toEqual({ value: 1, done: false })
 	expect(await i2).toEqual({ value: 2, done: false })
-	expect(await i3.then(result => ({ result }), error => error)).toBe(13)
+	expect(
+		await i3.then(
+			result => ({ result }),
+			error => error,
+		),
+	).toBe(13)
 	expect(closed).toBe(true)
 	expect(await i4).toEqual({ value: undefined, done: true })
 	expect(await i5).toEqual({ value: undefined, done: true })
@@ -268,6 +275,7 @@ test("closing stream on throwing in a loop | stream.write", async () => {
 		for await (const data of streamiterator(stream)) {
 			++count
 			expect(data).toBe(1)
+			// eslint-disable-next-line no-throw-literal
 			throw 13
 		}
 	} catch (e) {

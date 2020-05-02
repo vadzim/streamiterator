@@ -1,42 +1,33 @@
-import callbackToIterator from "@vadzim/callback-to-iterator"
-import getAsyncIterable from "@vadzim/get-async-iterable"
+export async function* streamiterator(stream) {
+	const resolved = await stream
 
-export function createStreamIterator(stream) {
-	stream.pause()
+	const reader = isReadable(resolved)
+		? resolved
+		: isReadable(resolved?.body)
+		? resolved?.body
+		: resolved?.body?.getReader?.()
 
-	const emitError = error => {
-		// Flush stream buffer. This is hacky, but I don't know a better way right now.
-		// eslint-disable-next-line no-underscore-dangle
-		const buffer = stream._readableState?.buffer
-		if (buffer) {
-			while (buffer.length > 0) {
-				emitData(buffer.shift())
-			}
+	if (typeof reader?.[Symbol.iterator] === "function") {
+		// do not use async iteration over sync iterator
+		// https://github.com/tc39/ecma262/issues/1849
+		for (const chunk of reader) yield chunk
+	} else if (typeof reader?.[Symbol.asyncIterator] === "function") {
+		yield* reader
+	} else if (typeof reader?.read === "function") {
+		let value
+		let done
+		try {
+			// eslint-disable-next-line no-sequences
+			for (; (done = true), ({ value, done } = await reader.read()), !done; ) yield value
+		} finally {
+			if (!done) await reader.cancel?.()
 		}
-		onError(error)
+	} else {
+		throw new TypeError("argument is not a ReadableStream")
 	}
-
-	const { iterable, emitData, emitEnd, emitError: onError } = callbackToIterator({
-		resume: () => void stream.resume(),
-		pause: () => void stream.pause(),
-		destroy: () => {
-			stream.removeListener("data", emitData)
-			stream.removeListener("end", emitEnd)
-			stream.removeListener("error", emitError)
-			if (typeof stream.destroy === "function") {
-				return new Promise(resolve => stream.destroy(null, resolve))
-			}
-			return undefined
-		},
-	})
-
-	stream.addListener("data", emitData)
-	stream.addListener("end", emitEnd)
-	stream.addListener("error", emitError)
-
-	return iterable
 }
 
-export function streamiterator(stream) {
-	return getAsyncIterable(stream) || createStreamIterator(stream)
-}
+const isReadable = value =>
+	typeof value?.[Symbol.iterator] === "function" ||
+	typeof value?.[Symbol.asyncIterator] === "function" ||
+	typeof value?.read === "function"

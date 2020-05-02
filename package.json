@@ -1,13 +1,15 @@
 {
   "name": "streamiterator",
   "version": "1.3.1",
-  "description": "converts ReadableStream into AsyncIterator",
+  "description": "Turns browser fetch stream into asynchronous iterator",
   "keywords": [
-    "iterable",
+    "fetch",
     "stream",
-    "ReadableStream",
-    "async",
     "iterator",
+    "iterable",
+    "async",
+    "asynchronous",
+    "ReadableStream",
     "AsyncIterator"
   ],
   "repository": "https://github.com/vadzim/streamiterator",
@@ -15,23 +17,25 @@
     "url": "https://github.com/vadzim/streamiterator/issues"
   },
   "contributors": [],
-  "author": "Vadzim Zieńka <developer@vadzim.info>",
-  "main": "distr/commonjs/index.js",
-  "module": "distr/module/index.js",
-  "esnext": "distr/esnext/index.js",
+  "author": "Vadzim Zieńka <vadzim@vadzim.info>",
+  "main": "dist/commonjs/index.js",
+  "module": "dist/module/index.js",
+  "esnext": "dist/esnext/index.js",
   "scripts": {
     "build": "module-scripts build",
-    "test": "module-scripts test",
-    "coverage": "module-scripts coverage",
     "lint": "module-scripts lint",
     "lint:fix": "module-scripts lint:fix",
-    "prepare": "npm run build",
-    "go": "npm run build && npm run test"
+    "lint:ci": "module-scripts lint:ci",
+    "test": "module-scripts test",
+    "test:debug": "module-scripts test:debug",
+    "coverage": "module-scripts coverage",
+    "prepack": "module-scripts prepack",
+    "prepublishOnly": "module-scripts prepublishOnly"
   },
   "license": "MIT",
-  "devDependencies": {},
-  "dependencies": {
-    "@vadzim/callback-to-iterator": "^0.2.1",
-    "@vadzim/get-async-iterable": "^0.0.1"
-  }
+  "devDependencies": {
+    "module-scripts": "^0.0.14",
+    "node-fetch": "^2.6.0"
+  },
+  "dependencies": {}
 }

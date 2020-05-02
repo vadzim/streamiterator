@@ -1,13 +1,15 @@
 {
   "name": "streamiterator",
-  "version": "1.3.1",
-  "description": "converts ReadableStream into AsyncIterator",
+  "version": "2.0.0",
+  "description": "Turns browser fetch stream into asynchronous iterator",
   "keywords": [
-    "iterable",
+    "fetch",
     "stream",
-    "ReadableStream",
-    "async",
     "iterator",
+    "iterable",
+    "async",
+    "asynchronous",
+    "ReadableStream",
     "AsyncIterator"
   ],
   "repository": "https://github.com/vadzim/streamiterator",
@@ -15,49 +17,25 @@
     "url": "https://github.com/vadzim/streamiterator/issues"
   },
   "contributors": [],
-  "main": "distr/streamiterator.js",
-  "author": "Vadzim Zieńka <developer@vadzim.info>",
+  "author": "Vadzim Zieńka <vadzim@vadzim.info>",
+  "main": "dist/commonjs/index.js",
+  "module": "dist/module/index.js",
+  "esnext": "dist/esnext/index.js",
   "scripts": {
-    "build": "flow && (rm distr/*; true) && babel source --out-dir distr && cd distr && (for f in $(find | grep -E '.js$'); do if grep @flow ../source/$f >/dev/null; then cp ../source/$f $f.flow; fi; done) && cd ..",
-    "prettier": "prettier --write 'source/**/*.js' 'example/**/*.js' '*.js'",
-    "prepare": "npm run build",
-    "test": "jest",
-    "go": "npm run prettier && npm run build && npm run test"
-  },
-  "jest": {
-    "transform": {
-      "\\.jsx?$": "babel-7-jest"
-    }
+    "build": "module-scripts build",
+    "lint": "module-scripts lint",
+    "lint:fix": "module-scripts lint:fix",
+    "lint:ci": "module-scripts lint:ci",
+    "test": "module-scripts test",
+    "test:debug": "module-scripts test:debug",
+    "coverage": "module-scripts coverage",
+    "prepack": "module-scripts prepack",
+    "prepublishOnly": "module-scripts prepublishOnly"
   },
   "license": "MIT",
   "devDependencies": {
-    "@babel/cli": "^7.0.0-beta.37",
-    "@babel/core": "^7.0.0-beta.37",
-    "@babel/plugin-proposal-async-generator-functions": "^7.0.0-beta.37",
-    "@babel/plugin-proposal-class-properties": "^7.0.0-beta.37",
-    "@babel/plugin-proposal-decorators": "^7.0.0-beta.37",
-    "@babel/plugin-proposal-export-default-from": "^7.0.0-beta.37",
-    "@babel/plugin-proposal-export-namespace-from": "^7.0.0-beta.37",
-    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.0.0-beta.37",
-    "@babel/plugin-proposal-numeric-separator": "^7.0.0-beta.37",
-    "@babel/plugin-proposal-object-rest-spread": "^7.0.0-beta.37",
-    "@babel/plugin-proposal-optional-chaining": "^7.0.0-beta.37",
-    "@babel/plugin-proposal-pipeline-operator": "^7.0.0-beta.37",
-    "@babel/plugin-proposal-throw-expressions": "^7.0.0-beta.37",
-    "@babel/plugin-transform-runtime": "^7.0.0-beta.37",
-    "@babel/preset-env": "^7.0.0-beta.37",
-    "@babel/preset-flow": "^7.0.0-beta.37",
-    "babel-7-jest": "^21.3.3",
-    "babel-plugin-add-module-exports": "^0.2.1",
-    "babel-plugin-transform-strict-mode": "^6.24.1",
-    "babylon": "^7.0.0-beta.37",
-    "flow-bin": "^0.63.1",
-    "jest": "^22.1.1",
-    "prettier": "^1.10.2"
+    "module-scripts": "^0.0.14",
+    "node-fetch": "^2.6.0"
   },
-  "dependencies": {
-    "@vadzim/callback-to-iterator": "^0.2.1",
-    "@vadzim/get-async-iterable": "^0.0.1",
-    "@babel/runtime": "^7.0.0-beta.37"
-  }
+  "dependencies": {}
 }

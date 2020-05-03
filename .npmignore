@@ -57,9 +57,4 @@ typings/
 # dotenv environment variables file
 .env
 
-# sources
-.babelrc
-.prettier
-.flowconfig
-source
-example
+.tscache

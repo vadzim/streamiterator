@@ -1,5 +1,3 @@
-const { streamiterator, createStreamIterator } = require("./streamiterator")
+const { streamiterator } = require("./streamiterator")
 
 module.exports = streamiterator
-
-module.exports.createStreamIterator = createStreamIterator

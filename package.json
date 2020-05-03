@@ -18,10 +18,14 @@
   },
   "contributors": [],
   "author": "Vadzim Zieńka <vadzim@vadzim.info>",
+  "source": "src/index.js",
   "main": "dist/commonjs/index.js",
   "module": "dist/module/index.js",
   "esnext": "dist/esnext/index.js",
   "scripts": {
+    "compile": "module-scripts compile",
+    "clean": "module-scripts clean",
+    "types": "module-scripts types",
     "build": "module-scripts build",
     "lint": "module-scripts lint",
     "lint:fix": "module-scripts lint:fix",
@@ -31,11 +35,12 @@
     "coverage": "module-scripts coverage",
     "prepack": "module-scripts prepack",
     "preversion": "module-scripts preversion",
-    "prepublishOnly": "module-scripts prepublishOnly"
+    "prepublishOnly": "module-scripts prepublishOnly",
+    "postpublish": "module-scripts postpublish"
   },
   "license": "MIT",
   "devDependencies": {
-    "module-scripts": "^0.0.16",
+    "module-scripts": "^0.0.18",
     "node-fetch": "^2.6.0"
   },
   "dependencies": {}

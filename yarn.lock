@@ -4148,10 +4148,10 @@ mkdirp@^0.5.0, mkdirp@^0.5.1:
   dependencies:
     minimist "^1.2.5"
 
-module-scripts@^0.0.19:
-  version "0.0.19"
-  resolved "https://registry.yarnpkg.com/module-scripts/-/module-scripts-0.0.19.tgz#a853ed4f16000edae80664d650fd0278ba058170"
-  integrity sha512-axxUYM1kQKGbaCCBh+WMhG9+LbIb9QxwEmxDB2CeryzHYckGSHV+bWzxBBwwmN6WMjwKliBQVJNJr/YIVYnDtg==
+module-scripts@^0.0.20:
+  version "0.0.20"
+  resolved "https://registry.yarnpkg.com/module-scripts/-/module-scripts-0.0.20.tgz#93428427c4a49d03ca7e51f9c6f53580458e5302"
+  integrity sha512-mwo6erYCF2mrVuDs2HftWv5lHGX2MR7zbRQ6UM1rYNkth68JbZMZuXIR9/FsX+0XXuyU1YmX3m4oy0dcMrJwig==
   dependencies:
     "@babel/cli" "^7.8.4"
     "@babel/core" "^7.9.6"

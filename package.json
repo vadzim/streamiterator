@@ -40,7 +40,7 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "module-scripts": "^0.0.18",
+    "module-scripts": "^0.0.19",
     "node-fetch": "^2.6.0"
   },
   "dependencies": {}

@@ -1,6 +1,7 @@
 import fetch from "node-fetch"
 import http from "http"
 import { streamiterator } from "./streamiterator"
+import "./index"
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 
@@ -74,4 +75,12 @@ test("works in browser", async () => {
 
 	expect(isNotCalled).toHaveBeenCalledTimes(0)
 	expect(isCalledOnce).toHaveBeenCalledTimes(1)
+})
+
+test("works with iterable", async () => {
+	expect(`${await collect(streamiterator("ABCD"))}`).toBe("A,B,C,D")
+})
+
+test("throws on wrong argument", async () => {
+	expect(collect(streamiterator(42))).rejects.toThrow(TypeError)
 })

@@ -30,11 +30,12 @@
     "test:debug": "module-scripts test:debug",
     "coverage": "module-scripts coverage",
     "prepack": "module-scripts prepack",
+    "preversion": "module-scripts preversion",
     "prepublishOnly": "module-scripts prepublishOnly"
   },
   "license": "MIT",
   "devDependencies": {
-    "module-scripts": "^0.0.14",
+    "module-scripts": "^0.0.16",
     "node-fetch": "^2.6.0"
   },
   "dependencies": {}

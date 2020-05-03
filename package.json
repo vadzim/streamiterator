@@ -1,6 +1,6 @@
 {
   "name": "streamiterator",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "Turns browser fetch stream into asynchronous iterator",
   "keywords": [
     "fetch",

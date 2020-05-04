@@ -81,6 +81,18 @@ test("works with iterable", async () => {
 	expect(`${await collect(streamiterator("ABCD"))}`).toBe("A,B,C,D")
 })
 
+test("works with async iterable", async () => {
+	expect(
+		`${await collect(
+			streamiterator(
+				(async function* () {
+					yield* "ABCD"
+				})(),
+			),
+		)}`,
+	).toBe("A,B,C,D")
+})
+
 test("throws on wrong argument", async () => {
 	await expect(collect(streamiterator(42))).rejects.toThrow(TypeError)
 })

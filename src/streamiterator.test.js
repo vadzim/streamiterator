@@ -82,5 +82,5 @@ test("works with iterable", async () => {
 })
 
 test("throws on wrong argument", async () => {
-	expect(collect(streamiterator(42))).rejects.toThrow(TypeError)
+	await expect(collect(streamiterator(42))).rejects.toThrow(TypeError)
 })

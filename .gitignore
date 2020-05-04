@@ -59,4 +59,4 @@ typings/
 
 # compiled files
 dist
-/.tscache
+.tscache

@@ -1,7 +1,6 @@
 import fetch from "node-fetch"
 import http from "http"
-import { streamiterator } from "./streamiterator"
-import "./index"
+import streamiterator from "./index"
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 

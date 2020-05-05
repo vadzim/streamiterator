@@ -18,6 +18,7 @@
   },
   "contributors": [],
   "author": "Vadzim Zieńka <vadzim@vadzim.info>",
+  "types": "dist/types/index.d.ts",
   "source": "src/index.js",
   "main": "dist/commonjs/index.js",
   "module": "dist/module/index.js",
@@ -40,7 +41,7 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "module-scripts": "^0.0.20",
+    "module-scripts": "^0.0.23",
     "node-fetch": "^2.6.0"
   },
   "dependencies": {}

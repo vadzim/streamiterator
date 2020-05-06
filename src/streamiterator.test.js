@@ -1,5 +1,6 @@
 import fetch from "node-fetch"
 import http from "http"
+import url from "url"
 import streamiterator from "./index"
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
@@ -32,12 +33,12 @@ test("works with node-fetch", async () => {
 
 	const { address, port } = server.address()
 
-	const url = `http://${/:/.test(address) ? `[${address}]` : address}:${port}`
+	const link = url.format({ protocol: "http", hostname: address, port })
 
 	try {
-		expect(`${await collect(streamiterator(fetch(`${url}/ABCD`)))}`).toBe("/,A,B,C,D")
-		expect(`${await collect(streamiterator(await fetch(`${url}/ABCD`)))}`).toBe("/,A,B,C,D")
-		expect(`${await collect(streamiterator((await fetch(`${url}/ABCD`)).body))}`).toBe("/,A,B,C,D")
+		expect(`${await collect(streamiterator(fetch(`${link}/ABCD`)))}`).toBe("/,A,B,C,D")
+		expect(`${await collect(streamiterator(await fetch(`${link}/ABCD`)))}`).toBe("/,A,B,C,D")
+		expect(`${await collect(streamiterator((await fetch(`${link}/ABCD`)).body))}`).toBe("/,A,B,C,D")
 
 		// can it work?
 

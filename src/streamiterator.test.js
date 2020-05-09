@@ -43,16 +43,18 @@ test("works with node-fetch", async () => {
 	}
 })
 
-const makeStream = items => {
+const makeReader = items => {
 	const data = items[Symbol.iterator]()
 	return { read: () => Promise.resolve(data.next()), cancel: () => Promise.resolve(data.return()) }
 }
 
+const makeStream = items => ({
+	getReader: () => makeReader(items),
+})
+
 const makeResponse = items =>
 	Promise.resolve({
-		body: {
-			getReader: () => makeStream(items),
-		},
+		body: makeStream(items),
 	})
 
 test("works in browser", async () => {

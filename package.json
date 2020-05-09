@@ -18,8 +18,8 @@
   },
   "contributors": [],
   "author": "Vadzim Zieńka <vadzim@vadzim.info>",
-  "types": "dist/types/index.d.ts",
   "source": "src/index.js",
+  "types": "dist/types/index.d.ts",
   "main": "dist/commonjs/index.js",
   "module": "dist/module/index.js",
   "esnext": "dist/esnext/index.js",
@@ -34,14 +34,14 @@
     "test": "module-scripts test",
     "test:debug": "module-scripts test:debug",
     "coverage": "module-scripts coverage",
+    "allchecks": "module-scripts allchecks",
     "prepack": "module-scripts prepack",
-    "preversion": "module-scripts preversion",
     "prepublishOnly": "module-scripts prepublishOnly",
     "postpublish": "module-scripts postpublish"
   },
   "license": "MIT",
   "devDependencies": {
-    "module-scripts": "^0.0.24",
+    "module-scripts": "^0.0.32",
     "node-fetch": "^2.6.0"
   },
   "dependencies": {}

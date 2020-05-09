@@ -1,6 +1,7 @@
 # streamiterator
 
-Turns browser fetch stream into asynchronous iterator. Works with `node-fetch` also.
+Turns browser streams into asynchronous iterator. This works with `fetch` responses, `fetch` body, files, blobs, readable streams.
+For compatibility reasons works with `node-fetch` too.
 
 ```js
 import { streamiterator } from "streamiterator"

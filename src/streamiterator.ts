@@ -1,10 +1,10 @@
-export function streamiterator(stream: PromiseLike<Body>): AsyncIterable<string | Buffer | Uint8Array>
-export function streamiterator(stream: Body): AsyncIterable<string | Buffer | Uint8Array>
-export function streamiterator<T>(stream: ReadableStream<T>): AsyncIterable<T>
-export function streamiterator<T>(stream: ReadableStreamDefaultReader<T>): AsyncIterable<T>
-export function streamiterator(stream: Blob): AsyncIterable<string | Buffer | Uint8Array>
-export function streamiterator<T>(stream: AsyncIterable<T>): AsyncIterable<T>
-export function streamiterator<T>(stream: Iterable<PromiseLike<T> | T>): AsyncIterable<T>
+export function streamiterator(stream: PromiseLike<Body>): AsyncGenerator<string | Buffer | Uint8Array>
+export function streamiterator(stream: Body): AsyncGenerator<string | Buffer | Uint8Array>
+export function streamiterator<T>(stream: ReadableStream<T>): AsyncGenerator<T>
+export function streamiterator<T>(stream: ReadableStreamDefaultReader<T>): AsyncGenerator<T>
+export function streamiterator(stream: Blob): AsyncGenerator<string | Buffer | Uint8Array>
+export function streamiterator<T>(stream: AsyncIterable<T>): AsyncGenerator<T>
+export function streamiterator<T>(stream: Iterable<PromiseLike<T> | T>): AsyncGenerator<T>
 
 export async function* streamiterator<T = string | Buffer | Uint8Array>(
 	stream:
@@ -15,7 +15,7 @@ export async function* streamiterator<T = string | Buffer | Uint8Array>(
 		| Blob
 		| Iterable<PromiseLike<T> | T>
 		| AsyncIterable<T>,
-): AsyncIterable<T> {
+): AsyncGenerator<T> {
 	const resolved = await stream
 
 	const reader = getStream(resolved) ?? getStream((resolved as Body)?.body)
@@ -27,7 +27,7 @@ export async function* streamiterator<T = string | Buffer | Uint8Array>(
 		// https://github.com/tc39/ecma262/issues/1849
 		for (const chunk of reader) yield chunk
 	} else if (isAsyncIterable<T>(reader)) {
-		yield* reader
+		for await (const chunk of reader) yield chunk
 	} else if (isReader<T>(reader)) {
 		let needClose
 		try {

@@ -46,7 +46,9 @@ export async function* streamiterator<T = string | Buffer | Uint8Array>(
 	}
 }
 
-function getStream<T>(value: unknown): Iterable<T> | AsyncIterable<T> | ReadableStreamDefaultReader<T> | undefined {
+function getStream<T>(
+	value: object | undefined | null,
+): Iterable<T> | AsyncIterable<T> | ReadableStreamDefaultReader<T> | undefined {
 	if (!value) {
 		return undefined
 	}
@@ -62,26 +64,26 @@ function getStream<T>(value: unknown): Iterable<T> | AsyncIterable<T> | Readable
 	return undefined
 }
 
-function isIterable<T>(value: unknown): value is Iterable<T> {
+function isIterable<T>(value: object): value is Iterable<T> {
 	return typeof (value as Iterable<T>)[Symbol.iterator] === "function"
 }
 
-function isAsyncIterable<T>(value: unknown): value is AsyncIterable<T> {
+function isAsyncIterable<T>(value: object): value is AsyncIterable<T> {
 	return typeof (value as AsyncIterable<T>)[Symbol.asyncIterator] === "function"
 }
 
-function isReadableStream<T>(value: unknown): value is ReadableStream<T> {
+function isReadableStream<T>(value: object): value is ReadableStream<T> {
 	return typeof (value as ReadableStream<T>).getReader === "function"
 }
 
-function isBlob(value: unknown): value is Blob {
+function isBlob(value: object): value is Blob {
 	return typeof (value as Blob).stream === "function"
 }
 
-function isReader<T>(value: unknown): value is ReadableStreamDefaultReader<T> {
+function isReader<T>(value: object): value is ReadableStreamDefaultReader<T> {
 	return typeof (value as ReadableStreamDefaultReader<T>).read === "function"
 }
 
-function isReadable<T>(value: unknown): value is Iterable<T> | AsyncIterable<T> | ReadableStreamDefaultReader<T> {
+function isReadable<T>(value: object): value is Iterable<T> | AsyncIterable<T> | ReadableStreamDefaultReader<T> {
 	return isIterable(value) || isAsyncIterable(value) || isReader(value)
 }
